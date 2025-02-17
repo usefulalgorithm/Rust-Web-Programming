@@ -6,15 +6,17 @@ use chrono::{NaiveDateTime, Utc};
 pub struct NewItem {
     pub title: String,
     pub status: String,
-    pub date: NaiveDateTime
+    pub date: NaiveDateTime,
+    pub user_id: i32,
 }
 
 impl NewItem {
-    pub fn new(title: String) -> Self {
+    pub fn new(title: String, user_id: i32) -> Self {
         Self {
             title,
             status: String::from("PENDING"),
-            date: Utc::now().naive_local()
+            date: Utc::now().naive_local(),
+            user_id,
         }
     }
 }

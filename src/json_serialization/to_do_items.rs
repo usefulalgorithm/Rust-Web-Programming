@@ -1,13 +1,13 @@
+use diesel::prelude::*;
 use std::str::FromStr;
 
 use actix_web::{body::BoxBody, http::header::ContentType, HttpResponse, Responder};
-use diesel::{query_dsl::methods::OrderDsl, ExpressionMethods, RunQueryDsl};
 use itertools::Itertools;
 use serde::Serialize;
 use serde_json::to_string;
 
 use crate::{
-    database::establish_connection,
+    database::DB_CONNECTION,
     models::item::item::Item,
     schema::to_do,
     to_do::{enums::TaskStatus, structs::base::Base, to_do_factory, ItemTypes},
@@ -38,9 +38,10 @@ impl ToDoItems {
         }
     }
 
-    pub fn get_state() -> Self {
-        let mut connection = establish_connection();
+    pub fn get_state(user_id: i32) -> Self {
+        let mut connection = DB_CONNECTION.db_connection.get().unwrap();
         let items = to_do::table
+            .filter(to_do::columns::user_id.eq(user_id))
             .order(to_do::columns::id.asc())
             .load::<Item>(&mut connection)
             .unwrap();

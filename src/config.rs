@@ -1,9 +1,13 @@
 use std::{env, fs};
 
-use yaml_rust2::YamlLoader;
+use serde::Deserialize;
 
+#[derive(Deserialize)]
+#[serde(rename_all = "UPPERCASE")]
 pub struct Config {
     pub db_url: String,
+    pub secret_key: String,
+    pub expire_minutes: i64,
 }
 
 impl Config {
@@ -11,10 +15,6 @@ impl Config {
         let args: Vec<String> = env::args().collect();
         let path = &args[args.len() - 1];
         let file = fs::read_to_string(path).unwrap();
-        let db_url = YamlLoader::load_from_str(&file).unwrap()[0]["DB_URL"]
-            .as_str()
-            .unwrap()
-            .to_string();
-        Self { db_url }
+        serde_yaml::from_str::<Config>(&file).unwrap()
     }
 }

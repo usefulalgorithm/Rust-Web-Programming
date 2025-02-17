@@ -10,8 +10,12 @@ use crate::{
 };
 
 #[actix_web::post("/edit")]
-pub async fn edit(to_do_item: web::Json<ToDoItem>, _token: JwToken, mut db: DB) -> HttpResponse {
-    let results = to_do::table.filter(to_do::columns::title.eq(&to_do_item.title));
-    let _ = diesel::update(results).set(to_do::columns::status.eq("DONE")).execute(&mut db.connection);
-    HttpResponse::Ok().json(ToDoItems::get_state())
+pub async fn edit(to_do_item: web::Json<ToDoItem>, token: JwToken, mut db: DB) -> HttpResponse {
+    let results = to_do::table
+        .filter(to_do::columns::title.eq(&to_do_item.title))
+        .filter(to_do::columns::user_id.eq(token.user_id));
+    let _ = diesel::update(results)
+        .set(to_do::columns::status.eq("DONE"))
+        .execute(&mut db.connection);
+    HttpResponse::Ok().json(ToDoItems::get_state(token.user_id))
 }

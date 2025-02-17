@@ -1,8 +1,8 @@
 use actix_web::web::{scope, ServiceConfig};
 mod create;
+mod delete;
 mod edit;
 mod get;
-mod delete;
 
 pub fn to_do_views_factory(app: &mut ServiceConfig) {
     app.service(

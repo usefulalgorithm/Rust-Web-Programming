@@ -1,13 +1,14 @@
-#[macro_use] extern crate diesel;
+#[macro_use]
+extern crate diesel;
 use actix_cors::Cors;
 use actix_service::Service;
 use actix_web::{App, HttpServer};
 use views::views_factory;
-mod json_serialization;
-mod models;
 mod config;
 mod database;
+mod json_serialization;
 mod jwt;
+mod models;
 mod schema;
 mod to_do;
 mod views;

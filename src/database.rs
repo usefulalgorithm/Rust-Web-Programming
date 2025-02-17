@@ -17,6 +17,7 @@ lazy_static! {
     pub static ref DB_CONNECTION: DbConnection = {
         let Config {
             db_url: connection_string,
+            ..
         } = Config::new();
         DbConnection {
             db_connection: PgPool::builder()
@@ -29,13 +30,8 @@ lazy_static! {
 
 type PooledPgConnection = PooledConnection<ConnectionManager<PgConnection>>;
 
-pub fn establish_connection() -> PooledPgConnection {
-    DB_CONNECTION.db_connection.get().unwrap()
-}
-
-
 pub struct DB {
-    pub connection: PooledPgConnection
+    pub connection: PooledPgConnection,
 }
 
 impl FromRequest for DB {
@@ -45,7 +41,7 @@ impl FromRequest for DB {
 
     fn from_request(_: &actix_web::HttpRequest, _: &mut actix_web::dev::Payload) -> Self::Future {
         match DB_CONNECTION.db_connection.get() {
-            Ok(connection) => ok(DB{connection}),
+            Ok(connection) => ok(DB { connection }),
             Err(_) => err(ErrorServiceUnavailable("could not connect to database")),
         }
     }
