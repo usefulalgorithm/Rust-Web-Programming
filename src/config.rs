@@ -8,6 +8,7 @@ pub struct Config {
     pub db_url: String,
     pub secret_key: String,
     pub expire_minutes: i64,
+    pub redis_url: String,
 }
 
 impl Config {
